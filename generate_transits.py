@@ -38,7 +38,8 @@ def generate_transit_calendar():
         is_retrograde = init_diff < 0
         retrograde_start_date = today if is_retrograde else None
         
-        for i in range(1, 365):
+        # CHANGED: Look ahead 1826 days (5 years) instead of 365
+        for i in range(1, 1826):
             current_date = today + datetime.timedelta(days=i)
             lon = get_ecliptic_lon(body, current_date)
             sign = signs[int(lon / 30) % 12]
@@ -93,9 +94,10 @@ def generate_transit_calendar():
             prev_sign = sign
             
         # Clean-up: If a slower planet (like Saturn) is still retrograde at the end of 
-        # our 365-day rolling window, we must close the block so it still renders on the calendar.
+        # our 5-year rolling window, we must close the block so it still renders on the calendar.
         if is_retrograde:
-            end_date_exclusive = today + datetime.timedelta(days=366)
+            # CHANGED: Match the new 5-year end boundary (1826 days out)
+            end_date_exclusive = today + datetime.timedelta(days=1826)
             e_block = Event(
                 name=f"⏪ {name} is Retrograde", 
                 begin=retrograde_start_date, 
